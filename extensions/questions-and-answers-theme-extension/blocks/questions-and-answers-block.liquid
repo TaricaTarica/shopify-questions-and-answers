@@ -1,0 +1,57 @@
+<section>
+    <h2>{{ block.settings.title }}<h2> 
+    {% comment %}   
+    {% if customer.id == null %}
+        <div>
+            {{ block.settings.question_submit_text | customer_login_link }}
+        </div>
+    {% else %} 
+
+    {% endif %}
+    {% endcomment %} 
+    <form>
+        <div>
+            <label for="question">{{ block.settings.question_input_label }}</label>
+            <textarea autocomplete="off" maxlength="2000" name="question" placeholder="{{ block.settings.question_input_placeholder }}"></textarea>
+        </div>
+        <div>
+            <button type="submit">{{ block.settings.question_submit_text }}</button>
+        </div>
+    </form>
+        
+</section>
+{% schema %}
+    {
+        "name": "Questions and Answers",
+        "target": "section",
+        "stylesheet": "questions-and-answers.css",
+        "javascript": "app.js",
+        "templates": ["product"],
+        "settings": [
+            { 
+                "label": "Section title", 
+                "id": "title", 
+                "type": "text", 
+                "default": "Questions and Answers" 
+            },
+            { 
+                "label": "Question input label", 
+                "id": "question_input_label", 
+                "type": "text", 
+                "default": "Make a question to the vendor" 
+            },
+            { 
+                "label": "Question input placeholder", 
+                "id": "question_input_placeholder", 
+                "type": "text", 
+                "default": "Write a question..." 
+            },
+            { 
+                "label": "Question submit text", 
+                "id": "question_submit_text", 
+                "type": "text", 
+                "default": "Ask a question!" 
+            }
+        ]
+    }
+{% endschema %}
