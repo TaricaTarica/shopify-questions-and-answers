@@ -6,42 +6,42 @@ import sqlite3 from "sqlite3";
 import path from "path";
 import shopify from "./shopify.js";
 
-const DEFAULT_DB_FILE = path.join(process.cwd(), "qr_codes_db.sqlite");
+const DEFAULT_DB_FILE = path.join(process.cwd(), "questions_and_answers_db.sqlite");
 const DEFAULT_PURCHASE_QUANTITY = 1;
 
 export const QRCodesDB = {
-  qrCodesTableName: "qr_codes",
+  questionsAndAnswersTableName: "questions_and_answers_db",
   db: null,
   ready: null,
 
   create: async function ({
     shopDomain,
-    title,
-    productId,
-    variantId,
-    handle,
-    discountId,
-    discountCode,
-    destination,
+    question,
+    questionedBy,
+    questionedOn,
+    answer,
+    answeredBy,
+    answeredOn,
+    productId
   }) {
     await this.ready;
 
     const query = `
-      INSERT INTO ${this.qrCodesTableName}
-      (shopDomain, title, productId, variantId, handle, discountId, discountCode, destination, scans)
+      INSERT INTO ${this.questionsAndAnswersTableName}
+      (shopDomain, question, questionedBy, questionedOn, answer, answeredBy, answeredOn, productId)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)
       RETURNING id;
     `;
 
     const rawResults = await this.__query(query, [
       shopDomain,
-      title,
-      productId,
-      variantId,
-      handle,
-      discountId,
-      discountCode,
-      destination,
+      question,
+      questionedBy,
+      questionedOn,
+      answer,
+      answeredBy,
+      answeredOn,
+      productId
     ]);
 
     return rawResults[0].id;
@@ -62,7 +62,7 @@ export const QRCodesDB = {
     await this.ready;
 
     const query = `
-      UPDATE ${this.qrCodesTableName}
+      UPDATE ${this.questionsAndAnswersTableName}
       SET
         title = ?,
         productId = ?,
@@ -91,7 +91,7 @@ export const QRCodesDB = {
   list: async function (shopDomain) {
     await this.ready;
     const query = `
-      SELECT * FROM ${this.qrCodesTableName}
+      SELECT * FROM ${this.questionsAndAnswersTableName}
       WHERE shopDomain = ?;
     `;
 
@@ -103,7 +103,7 @@ export const QRCodesDB = {
   read: async function (id) {
     await this.ready;
     const query = `
-      SELECT * FROM ${this.qrCodesTableName}
+      SELECT * FROM ${this.questionsAndAnswersTableName}
       WHERE id = ?;
     `;
     const rows = await this.__query(query, [id]);
@@ -115,7 +115,7 @@ export const QRCodesDB = {
   delete: async function (id) {
     await this.ready;
     const query = `
-      DELETE FROM ${this.qrCodesTableName}
+      DELETE FROM ${this.questionsAndAnswersTableName}
       WHERE id = ?;
     `;
     await this.__query(query, [id]);
@@ -163,7 +163,7 @@ export const QRCodesDB = {
         type = 'table' AND
         name = ?;
     `;
-    const rows = await this.__query(query, [this.qrCodesTableName]);
+    const rows = await this.__query(query, [this.questionsAndAnswersTableName]);
     return rows.length === 1;
   },
 
@@ -181,7 +181,7 @@ export const QRCodesDB = {
       /* Create the QR code table if it hasn't been created */
     } else {
       const query = `
-        CREATE TABLE ${this.qrCodesTableName} (
+        CREATE TABLE ${this.questionsAndAnswersTableName} (
           id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
           shopDomain VARCHAR(511) NOT NULL,
           title VARCHAR(511) NOT NULL,
@@ -230,7 +230,7 @@ export const QRCodesDB = {
 
   __increaseScanCount: async function (qrcode) {
     const query = `
-      UPDATE ${this.qrCodesTableName}
+      UPDATE ${this.questionsAndAnswersTableName}
       SET scans = scans + 1
       WHERE id = ?
     `;

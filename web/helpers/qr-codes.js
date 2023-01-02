@@ -1,5 +1,5 @@
 import shopify from "../shopify.js";
-import { QRCodesDB } from "../qr-codes-db.js";
+import { QRCodesDB } from "../questions-and-answers-db.js";
 
 /*
   The app's database stores the productId and the discountId.
@@ -56,24 +56,20 @@ export async function getShopUrlFromSession(req, res) {
 }
 
 /*
-Expect body to contain
-title: string
-productId: string
-variantId: string
-handle: string
-discountId: string
-discountCode: string
-destination: string
+Expected body content:
+
+  question (string)
+  questionedBy (string)
+  questionedOn (string)
+  productId (string)
+
 */
-export async function parseQrCodeBody(req, res) {
+export async function parseQuestionBody(req, res) {
   return {
-    title: req.body.title,
-    productId: req.body.productId,
-    variantId: req.body.variantId,
-    handle: req.body.handle,
-    discountId: req.body.discountId,
-    discountCode: req.body.discountCode,
-    destination: req.body.destination,
+    question: req.body.question,
+    questionedBy: req.body.questionedBy,
+    questionedOn: req.body.questionedOn,
+    productId: req.body.productId
   };
 }
 
