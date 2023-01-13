@@ -9,15 +9,51 @@
 
     {% endif %}
     {% endcomment %} 
-    <form>
+    <form id="question-form">
+        <p>Hello from pc</p>
         <div>
             <label for="question">{{ block.settings.question_input_label }}</label>
-            <textarea autocomplete="off" maxlength="2000" name="question" placeholder="{{ block.settings.question_input_placeholder }}"></textarea>
+            <textarea id="question" autocomplete="off" maxlength="2000" name="question" placeholder="{{ block.settings.question_input_placeholder }}"></textarea>
         </div>
         <div>
             <button type="submit">{{ block.settings.question_submit_text }}</button>
         </div>
     </form>
+
+    <script>
+        async function postData(url = '', data = {}) {
+            const response = await fetch(url, {
+              method: 'POST', // *GET, POST, PUT, DELETE, etc.
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+            });
+            return response.json(); // parses JSON response into native JavaScript objects
+          }
+          
+          
+          console.log('readed file')
+          
+          let form = document.getElementById('question-form');
+          
+          form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            debugger;
+            
+            question = {
+              question: document.getElementById('question').value,
+              questionedBy: '{{customer.name}}',
+              questionedOn: Date.now(),
+              productId: '{{product.id}}',
+            }
+            
+            await postData('/apps/express-api/questions', question).then((data) => {
+              console.log(data);
+            });
+          
+          });
+    </script>
         
 </section>
 {% schema %}

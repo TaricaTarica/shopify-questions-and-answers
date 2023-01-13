@@ -60,7 +60,7 @@ export default defineConfig({
       "^/api(/|(\\?.*)?$)": proxyOptions,
       "^/qrcodes/[0-9]+/image(\\?.*)?$": proxyOptions,
       "^/qrcodes/[0-9]+/scan(\\?.*)?$": proxyOptions,
-      "^/public-api/questions-and-answers(/|(\\?.*)?$)": proxyOptions,
+      "^/proxy-api/questions(/|(\\?.*)?$)": proxyOptions,
     },
   },
 });

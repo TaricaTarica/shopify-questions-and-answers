@@ -29,7 +29,7 @@ export const QRCodesDB = {
     const query = `
       INSERT INTO ${this.questionsAndAnswersTableName}
       (shopDomain, question, questionedBy, questionedOn, answer, answeredBy, answeredOn, productId)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       RETURNING id;
     `;
 
@@ -44,7 +44,9 @@ export const QRCodesDB = {
       productId
     ]);
 
-    return rawResults[0].id;
+    console.log('created question: ', rawResults[0]);
+
+    return rawResults[0];
   },
 
   update: async function (

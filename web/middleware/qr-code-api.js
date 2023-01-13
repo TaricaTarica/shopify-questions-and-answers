@@ -12,7 +12,6 @@ import shopify from "../shopify.js";
 import { QRCodesDB } from "../questions-and-answers-db.js";
 import {
   getQrCodeOr404,
-  getShopUrlFromSession,
   parseQuestionBody,
   formatQrCodeResponse,
 } from "../helpers/qr-codes.js";
@@ -85,7 +84,6 @@ export default function applyQrCodeApiEndpoints(app) {
         ...(await parseQuestionBody(req)),
 
         /* Get the shop from the authorization header to prevent users from spoofing the data */
-        shopDomain: await getShopUrlFromSession(req, res),
       });
       const response = await formatQrCodeResponse(req, res, [
         await QRCodesDB.read(id),
@@ -115,7 +113,6 @@ export default function applyQrCodeApiEndpoints(app) {
   app.get("/api/qrcodes", async (req, res) => {
     try {
       const rawCodeData = await QRCodesDB.list(
-        await getShopUrlFromSession(req, res)
       );
 
       const response = await formatQrCodeResponse(req, res, rawCodeData);
