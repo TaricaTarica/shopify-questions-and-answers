@@ -44,8 +44,6 @@ export const QRCodesDB = {
       productId
     ]);
 
-    console.log('created question: ', rawResults[0]);
-
     return rawResults[0];
   },
 

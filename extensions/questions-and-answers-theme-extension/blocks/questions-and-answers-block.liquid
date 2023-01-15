@@ -1,6 +1,5 @@
 <section>
     <h2>{{ block.settings.title }}<h2> 
-    {% comment %}   
     {% if customer.id == null %}
         <div>
             {{ block.settings.question_submit_text | customer_login_link }}
@@ -8,9 +7,7 @@
     {% else %} 
 
     {% endif %}
-    {% endcomment %} 
     <form id="question-form">
-        <p>Hello from pc</p>
         <div>
             <label for="question">{{ block.settings.question_input_label }}</label>
             <textarea id="question" autocomplete="off" maxlength="2000" name="question" placeholder="{{ block.settings.question_input_placeholder }}"></textarea>
@@ -21,20 +18,19 @@
     </form>
 
     <script>
+        //TODO: Find a way to move this scripts to another js file (excepts the liquid variables).
+
         async function postData(url = '', data = {}) {
             const response = await fetch(url, {
-              method: 'POST', // *GET, POST, PUT, DELETE, etc.
+              method: 'POST', 
               headers: {
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify(data)
             });
-            return response.json(); // parses JSON response into native JavaScript objects
+            return response.json(); 
           }
-          
-          
-          console.log('readed file')
-          
+                    
           let form = document.getElementById('question-form');
           
           form.addEventListener('submit', async function(event) {
@@ -44,7 +40,7 @@
             question = {
               question: document.getElementById('question').value,
               questionedBy: '{{customer.name}}',
-              questionedOn: Date.now(),
+              questionedOn: new Date().toISOString().slice(0, 10),
               productId: '{{product.id}}',
             }
             
