@@ -180,20 +180,19 @@ export const QRCodesDB = {
     if (hasQrCodesTable) {
       this.ready = Promise.resolve();
 
-      /* Create the QR code table if it hasn't been created */
+      /* Create the Questions and Answers table code table if it hasn't been created */
     } else {
       const query = `
         CREATE TABLE ${this.questionsAndAnswersTableName} (
           id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
           shopDomain VARCHAR(511) NOT NULL,
-          title VARCHAR(511) NOT NULL,
+          question VARCHAR(511) NOT NULL,
+          questionedBy VARCHAR(255) NOT NULL,
+          questionedOn DATETIME NOT NULL,
+          answer VARCHAR(511),
+          answeredBy VARCHAR(255),
+          answeredOn DATETIME,
           productId VARCHAR(255) NOT NULL,
-          variantId VARCHAR(255) NOT NULL,
-          handle VARCHAR(255) NOT NULL,
-          discountId VARCHAR(255) NOT NULL,
-          discountCode VARCHAR(255) NOT NULL,
-          destination VARCHAR(255) NOT NULL,
-          scans INTEGER,
           createdAt DATETIME NOT NULL DEFAULT (datetime(CURRENT_TIMESTAMP, 'localtime'))
         )
       `;
