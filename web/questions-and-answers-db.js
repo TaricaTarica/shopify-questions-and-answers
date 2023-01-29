@@ -9,7 +9,7 @@ import shopify from "./shopify.js";
 const DEFAULT_DB_FILE = path.join(process.cwd(), "questions_and_answers_db.sqlite");
 const DEFAULT_PURCHASE_QUANTITY = 1;
 
-export const QRCodesDB = {
+export const questionsAndAnswersDB = {
   questionsAndAnswersTableName: "questions_and_answers_db",
   db: null,
   ready: null,
@@ -96,8 +96,8 @@ export const QRCodesDB = {
     `;
 
     const results = await this.__query(query, [shopDomain]);
-
-    return results.map((qrcode) => this.__addImageUrl(qrcode));
+    
+    return results;
   },
 
   read: async function (id) {
@@ -213,7 +213,7 @@ export const QRCodesDB = {
     });
   },
 
-  __addImageUrl: function (qrcode) {
+  __addImageUrl: function (qrcode) { //THIS FUNCTION MUST BE DELETED
     try {
       qrcode.imageUrl = this.__generateQrcodeImageUrl(qrcode);
     } catch (err) {

@@ -27,7 +27,7 @@ function SmallScreenCard({
   navigate,
 }) {
   return (
-    <UnstyledLink onClick={() => navigate(`/qrcodes/${id}`)}>
+    <UnstyledLink onClick={() => navigate(`/questions/${id}`)}>
       <div
         style={{ padding: "0.75rem 1rem", borderBottom: "1px solid #E1E3E5" }}
       >
@@ -69,25 +69,25 @@ function SmallScreenCard({
   );
 }
 
-export function QRCodeIndex({ QRCodes, loading }) {
+export function QRCodeIndex({ questions, loading }) {
   const navigate = useNavigate();
 
   /* Check if screen is small */
   const isSmallScreen = useMedia("(max-width: 640px)");
 
   /* Map over QRCodes for small screen */
-  const smallScreenMarkup = QRCodes.map((QRCode) => (
-    <SmallScreenCard key={QRCode.id} navigate={navigate} {...QRCode} />
+  const smallScreenMarkup = questions.map((question) => (
+    <SmallScreenCard key={question.id} navigate={navigate} {...question} />
   ));
 
   const resourceName = {
-    singular: "QR code",
-    plural: "QR codes",
+    singular: "Question",
+    plural: "Questions",
   };
 
-  const rowMarkup = QRCodes.map(
-    ({ id, title, product, discountCode, scans, createdAt }, index) => {
-      const deletedProduct = product.title.includes("Deleted product");
+  const rowMarkup = questions.map(
+    ({ id, question, questionedBy, questionedOn, answer, answeredBy, answeredOn, productId, createdAt }, index) => {
+      const deletedProduct = false; //MUST DELETE THIS
 
       /* The form layout, created using Polaris components. Includes the QR code data set above. */
       return (
@@ -96,37 +96,19 @@ export function QRCodeIndex({ QRCodes, loading }) {
           key={id}
           position={index}
           onClick={() => {
-            navigate(`/qrcodes/${id}`);
+            navigate(`/questions/${id}`);
           }}
         >
           <IndexTable.Cell>
-            <Thumbnail
-              source={product?.images?.edges[0]?.node?.url || ImageMajor}
-              alt="placeholder"
-              color="base"
-              size="small"
-            />
-          </IndexTable.Cell>
-          <IndexTable.Cell>
-            <UnstyledLink data-primary-link url={`/qrcodes/${id}`}>
-              {truncate(title, 25)}
+            <UnstyledLink data-primary-link url={`/questions/${id}`}>
+              {truncate(question, 25)}
             </UnstyledLink>
           </IndexTable.Cell>
-          <IndexTable.Cell>
-            <Stack>
-              {deletedProduct && (
-                <Icon source={DiamondAlertMajor} color="critical" />
-              )}
-              <TextStyle variation={deletedProduct ? "negative" : null}>
-                {truncate(product?.title, 25)}
-              </TextStyle>
-            </Stack>
-          </IndexTable.Cell>
-          <IndexTable.Cell>{discountCode}</IndexTable.Cell>
-          <IndexTable.Cell>
-            {dayjs(createdAt).format("MMMM D, YYYY")}
-          </IndexTable.Cell>
-          <IndexTable.Cell>{scans}</IndexTable.Cell>
+          <IndexTable.Cell>{questionedBy}</IndexTable.Cell>
+          <IndexTable.Cell>{questionedOn}</IndexTable.Cell>
+          <IndexTable.Cell>{answer}</IndexTable.Cell>
+          <IndexTable.Cell>{answeredBy}</IndexTable.Cell>
+          <IndexTable.Cell>{answeredOn}</IndexTable.Cell>
         </IndexTable.Row>
       );
     }
@@ -140,14 +122,14 @@ export function QRCodeIndex({ QRCodes, loading }) {
       ) : (
         <IndexTable
           resourceName={resourceName}
-          itemCount={QRCodes.length}
+          itemCount={questions.length}
           headings={[
-            { title: "Thumbnail", hidden: true },
-            { title: "Title" },
-            { title: "Product" },
-            { title: "Discount" },
-            { title: "Date created" },
-            { title: "Scans" },
+            { title: "Question" },
+            { title: "Questioned By" },
+            { title: "Questioned On" },
+            { title: "Answer" },
+            { title: "Answered By" },
+            { title: "Answered On" },
           ]}
           selectable={false}
           loading={loading}

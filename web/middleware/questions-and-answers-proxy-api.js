@@ -1,4 +1,4 @@
-import { QRCodesDB } from "../questions-and-answers-db.js";
+import { questionsAndAnswersDB } from "../questions-and-answers-db.js";
 import {
   getShopUrlFromRequest,
   parseQuestionBody,
@@ -13,7 +13,7 @@ export default function applyQuestionsAndAnswersPublicEndpoints(app) {
 
   app.post("/proxy-api/questions", async (req, res) => {
     try {
-      const question = await QRCodesDB.create({
+      const question = await questionsAndAnswersDB.create({
         ...(await parseQuestionBody(req)),
         shopDomain: await getShopUrlFromRequest(req),
       });

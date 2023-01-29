@@ -21,7 +21,7 @@ export default function HomePage() {
     These are mock values. Setting these values lets you preview the loading markup and the empty state.
   */
   const {
-    data: QRCodes,
+    data: questions,
     isLoading,
   
     /*
@@ -32,8 +32,10 @@ export default function HomePage() {
     */
     isRefetching,
   } = useAppQuery({
-    url: "/api/qrcodes",
+    url: "/api/questions-and-answers",
   });
+
+  console.log("questions: ", questions)
 
   /* loadingMarkup uses the loading component from AppBridge and components from Polaris  */
   const loadingMarkup = isLoading ? (
@@ -45,7 +47,7 @@ export default function HomePage() {
 
   /* Use Polaris Card and EmptyState components to define the contents of the empty state */
   const emptyStateMarkup =
-    !isLoading && !QRCodes?.length ? (
+    !isLoading && !questions?.length ? (
       <Card sectioned>
         <EmptyState
           heading="Create unique QR codes for your product"
@@ -64,8 +66,8 @@ export default function HomePage() {
     ) : null;
 
     /* Set the QR codes to use in the list */
-    const qrCodesMarkup = QRCodes?.length ? (
-      <QRCodeIndex QRCodes={QRCodes} loading={isRefetching} />
+    const questionsMarkup = questions?.length ? (
+      <QRCodeIndex questions={questions} loading={isRefetching} />
     ) : null;
 
   /*
@@ -73,9 +75,9 @@ export default function HomePage() {
     and include the empty state contents set above.
   */
   return (
-    <Page fullWidth={!!qrCodesMarkup}>
+    <Page fullWidth={!!questionsMarkup}>
       <TitleBar
-        title="QR codes"
+        title="Questions and Answers"
         primaryAction={{
           content: "Create QR code",
           onAction: () => navigate("/qrcodes/new"),
@@ -84,7 +86,7 @@ export default function HomePage() {
       <Layout>
         <Layout.Section>
           {loadingMarkup}
-          {qrCodesMarkup}
+          {questionsMarkup}
           {emptyStateMarkup}
         </Layout.Section>
       </Layout>

@@ -1,5 +1,5 @@
 import shopify from "../shopify.js";
-import { QRCodesDB } from "../questions-and-answers-db.js";
+import { questionsAndAnswersDB } from "../questions-and-answers-db.js";
 
 /*
   The app's database stores the productId and the discountId.
@@ -7,7 +7,7 @@ import { QRCodesDB } from "../questions-and-answers-db.js";
   By querying the Shopify GraphQL Admin API at runtime, data can't become stale.
   This data is also queried so that the full state can be saved to the database, in order to generate QR code links.
 */
-const QR_CODE_ADMIN_QUERY = `
+const QA_ADMIN_QUERY = `
   query nodes($ids: [ID!]!) {
     nodes(ids: $ids) {
       ... on Product {
@@ -25,9 +25,6 @@ const QR_CODE_ADMIN_QUERY = `
       ... on ProductVariant {
         id
       }
-      ... on DiscountCodeNode {
-        id
-      }
     }
   }
 `;
@@ -38,6 +35,10 @@ export async function getQrCodeOr404(req, res, checkDomain = true) {
 
 export async function getShopUrlFromRequest(req) {
   return `https://${req.query.shop}`;
+}
+
+export async function getShopUrlFromSession(req, res) {
+  return `https://${res.locals.shopify.session.shop}`;
 }
 
 /*
@@ -64,14 +65,9 @@ export async function parseQuestionBody(req, res) {
 export async function formatQrCodeResponse(req, res, rawCodeData) {
   const ids = [];
 
-  /* Get every product, variant and discountID that was queried from the database */
-  rawCodeData.forEach(({ productId, discountId, variantId }) => {
+  /* Get every product from the database */
+  rawCodeData.forEach(({ productId }) => {
     ids.push(productId);
-    ids.push(variantId);
-
-    if (discountId) {
-      ids.push(discountId);
-    }
   });
 
   /* Instantiate a new GraphQL client to query the Shopify GraphQL Admin API */
@@ -82,9 +78,9 @@ export async function formatQrCodeResponse(req, res, rawCodeData) {
   /* Query the Shopify GraphQL Admin API */
   const adminData = await client.query({
     data: {
-      query: QR_CODE_ADMIN_QUERY,
+      query: QA_ADMIN_QUERY,
 
-      /* The IDs that are pulled from the app's database are used to query product, variant and discount information */
+      /* The IDs that are pulled from the app's database are used to query product */
       variables: { ids },
     },
   });
@@ -109,7 +105,7 @@ export async function formatQrCodeResponse(req, res, rawCodeData) {
       Use mock data so that the frontend knows how to interpret this QR Code.
     */
     if (discountDeleted) {
-      QRCodesDB.update(qrCode.id, {
+      questionsAndAnswersDB.update(qrCode.id, {
         ...qrCode,
         discountId: "",
         discountCode: "",

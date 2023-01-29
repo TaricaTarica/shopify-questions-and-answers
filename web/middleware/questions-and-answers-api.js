@@ -9,11 +9,12 @@
 import express from "express";
 
 import shopify from "../shopify.js";
-import { QRCodesDB } from "../questions-and-answers-db.js";
+import { questionsAndAnswersDB } from "../questions-and-answers-db.js";
 import {
   getQrCodeOr404,
   parseQuestionBody,
   formatQrCodeResponse,
+  getShopUrlFromSession
 } from "../helpers/qr-codes.js";
 
 const DISCOUNTS_QUERY = `
@@ -80,13 +81,13 @@ export default function applyQrCodeApiEndpoints(app) {
 
   app.post("/api/qrcodes", async (req, res) => {
     try {
-      const id = await QRCodesDB.create({
+      const id = await questionsAndAnswersDB.create({
         ...(await parseQuestionBody(req)),
 
         /* Get the shop from the authorization header to prevent users from spoofing the data */
       });
       const response = await formatQrCodeResponse(req, res, [
-        await QRCodesDB.read(id),
+        await questionsAndAnswersDB.read(id),
       ]);
       res.status(201).send(response[0]);
     } catch (error) {
@@ -99,9 +100,9 @@ export default function applyQrCodeApiEndpoints(app) {
 
     if (qrcode) {
       try {
-        await QRCodesDB.update(req.params.id, await parseQuestionBody(req));
+        await questionsAndAnswersDB.update(req.params.id, await parseQuestionBody(req));
         const response = await formatQrCodeResponse(req, res, [
-          await QRCodesDB.read(req.params.id),
+          await questionsAndAnswersDB.read(req.params.id),
         ]);
         res.status(200).send(response[0]);
       } catch (error) {
@@ -110,13 +111,13 @@ export default function applyQrCodeApiEndpoints(app) {
     }
   });
 
-  app.get("/api/qrcodes", async (req, res) => {
+  app.get("/api/questions-and-answers", async (req, res) => {
     try {
-      const rawCodeData = await QRCodesDB.list(
-      );
+      const shopDomain = await getShopUrlFromSession(req, res);
+      const rawCodeData = await questionsAndAnswersDB.list(shopDomain);
 
-      const response = await formatQrCodeResponse(req, res, rawCodeData);
-      res.status(200).send(response);
+      //const response = await formatQrCodeResponse(req, res, rawCodeData);
+      res.status(200).send(rawCodeData);
     } catch (error) {
       console.error(error);
       res.status(500).send(error.message);
@@ -136,7 +137,7 @@ export default function applyQrCodeApiEndpoints(app) {
     const qrcode = await getQrCodeOr404(req, res);
 
     if (qrcode) {
-      await QRCodesDB.delete(req.params.id);
+      await questionsAndAnswersDB.delete(req.params.id);
       res.status(200).send();
     }
   });
