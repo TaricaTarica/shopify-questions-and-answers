@@ -1,16 +1,9 @@
-# Shopify React Frontend App
+# Shopify Questions and Answers
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
+## Shopify Application Proxy Setup
 
-This repository is the frontend for Shopify’s app starter templates. **You probably don’t want to use this repository directly**, but rather through one of the templates and the [Shopify CLI](https://github.com/Shopify/shopify-cli).
+* **Prefix**: apps
+* **Secondary route**: express-api
+* **Proxy URL**: [[server or tunnel url]]/proxy-api/
 
-## Developer resources
-
-- [Introduction to Shopify apps](https://shopify.dev/apps/getting-started)
-  - [App authentication](https://shopify.dev/apps/auth)
-- [Shopify CLI command reference](https://shopify.dev/apps/tools/cli/app)
-- [Shopify API Library documentation](https://github.com/Shopify/shopify-node-api/tree/main/docs)
-
-## License
-
-This repository is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+**Important**: to make any changes on the application proxy, delete and create a new proxy. If you edit the current proxy it will not work.
