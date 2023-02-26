@@ -129,3 +129,19 @@ export async function formatQrCodeResponse(req, res, rawCodeData) {
 
   return formattedData;
 }
+
+export async function getProductInfoForEachQuestion(questions, res) {
+  const uniqueProductsIds = [...new Set(questions.map((question) => question.productId))];
+
+  const products = await shopify.api.rest.Product.all({
+    session: res.locals.shopify.session,
+    ids: uniqueProductsIds.toString(),
+    fields: "id,images,title",
+  });
+
+  questions.forEach(question => {
+    question['product'] = products.find(product => product.id == question.productId);
+  });
+
+  return questions;
+}

@@ -14,7 +14,8 @@ import {
   getQrCodeOr404,
   parseQuestionBody,
   formatQrCodeResponse,
-  getShopUrlFromSession
+  getShopUrlFromSession,
+  getProductInfoForEachQuestion
 } from "../helpers/qr-codes.js";
 
 const DISCOUNTS_QUERY = `
@@ -114,10 +115,10 @@ export default function applyQrCodeApiEndpoints(app) {
   app.get("/api/questions-and-answers", async (req, res) => {
     try {
       const shopDomain = await getShopUrlFromSession(req, res);
-      const rawCodeData = await questionsAndAnswersDB.list(shopDomain);
+      const questions = await questionsAndAnswersDB.list(shopDomain);
+      const questionsProductInfo = await getProductInfoForEachQuestion(questions, res);
 
-      //const response = await formatQrCodeResponse(req, res, rawCodeData);
-      res.status(200).send(rawCodeData);
+      res.status(200).send(questionsProductInfo);
     } catch (error) {
       console.error(error);
       res.status(500).send(error.message);
